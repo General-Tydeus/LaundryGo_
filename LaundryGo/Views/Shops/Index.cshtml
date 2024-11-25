@@ -1,0 +1,68 @@
+﻿@model IEnumerable<LaundryGo.Models.Shop>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Shops</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+    <h1>Shops nearby</h1>
+    <a class="btn btn-primary mt-2 mt-md-0" asp-action="Create"> + Create New</a>
+</div>
+
+
+<div class="d-flex flex-column vh-100">
+        <div id="map" class="flex-grow-1">
+            @*@{ Html.RenderPartial("_Map"); }*@
+        </div>
+    </div>
+@*<div id="map" style="width: 100%; height: 100%;"></div>*@
+
+<script>
+    var userMarker;
+    var userCircle;
+
+    var map = L.map('map').setView([10.669190970892677, 122.97700317993419], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    function onLocationFound(e) {
+        var radius = e.accuracy / 2;
+
+        if (!userMarker) {
+            userMarker = L.marker(e.latlng).addTo(map)
+                .bindPopup("You are here!").openPopup();
+            userCircle = L.circle(e.latlng, {
+                radius: 300,
+                color: 'blue',
+                fillColor: '#add8e6',
+                fillOpacity: 0.5
+            }).addTo(map);
+        } else {
+            userMarker.setLatLng(e.latlng).openPopup();
+            userCircle.setLatLng(e.latlng).setRadius(300);
+        }
+    }
+
+    function onLocationError(e) {
+        alert(e.message);
+    }
+
+    map.on('locationfound', onLocationFound);
+    map.on('locationerror', onLocationError);
+
+    map.locate({ setView: true, maxZoom: 16, watch: true });
+
+
+    map.on("contextmenu", function (e) {
+        console.log("Coordinates: " + e.latlng.toString());
+        L.marker(e.latlng).addTo(map);
+    });
+</script>

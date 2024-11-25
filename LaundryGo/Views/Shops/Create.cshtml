@@ -1,0 +1,74 @@
+﻿@model LaundryGo.Models.Shop
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["Title"] = "Create";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Shops" asp-action="Index">Shops</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create Shop</li>
+    </ol>
+</nav>
+
+<h1>Create Shop</h1>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="alert alert-warning" role="alert">
+                    Click on the map to get Address!
+                </div>
+                <label asp-for="Address" class="control-label"></label>
+                <textarea asp-for="Address" class="form-control" name="Address" rows="3" readonly></textarea>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Coord_lat" class="control-label"></label>
+                <input asp-for="Coord_lat" class="form-control" id="Coord_lat" readonly />
+                <span asp-validation-for="Coord_lat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Coord_long" class="control-label"></label>
+                <input asp-for="Coord_long" class="form-control" id="Coord_long" readonly />
+                <span asp-validation-for="Coord_long" class="text-danger"></span>
+            </div>
+            @*<div class="form-group" type="hidden">
+                <label asp-for="UserId" class="control-label"></label>*@
+                <input type="hidden" asp-for="UserId" class="form-control" value="@UserManager.GetUserId(User)" readonly />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            @*</div>*@
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+        </form>
+    </div>
+
+    <!-- Map Column -->
+    <div class="col-md-8">
+        <div class="d-flex flex-column" style="height: 100%;">
+            <div class="flex-grow-1">
+                @{ Html.RenderPartial("_Map"); }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top : 3%">
+    <hr />
+    <a asp-action="Index">Back to Shop</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
