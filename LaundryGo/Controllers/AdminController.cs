@@ -25,6 +25,7 @@ namespace LaundryGo.Controllers
             _roleManager = roleManager;
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Users()
         {
             var userRoleDetails = from ur in _context.UserRoles
@@ -41,16 +42,24 @@ namespace LaundryGo.Controllers
             return View(userRoleDetails);
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         // GET: Admin
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Shops()
         {
             //var allshops = await _context.Shop.ToListAsync();
             return View(await _context.Shop.ToListAsync());
         }
 
+        [Authorize(Roles ="Admin")]
+        // GET: Admin
+        public async Task<IActionResult> Index()
+        {
+            //var allshops = await _context.Shop.ToListAsync();
+            return View();
+        }
+
         // GET: Admin/Details/5
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -142,7 +151,7 @@ namespace LaundryGo.Controllers
                     }
                 }
 
-                return RedirectToAction(nameof(Index));  
+                return RedirectToAction(nameof(Shops));  
             }
             return View(shop);
         }

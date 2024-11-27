@@ -6,7 +6,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Shops</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Shops">Shop List</a></li>
         <li class="breadcrumb-item active" aria-current="page">Edit Shop</li>
     </ol>
 </nav>
@@ -77,17 +77,16 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Shops">Back to List</a>
 </div>
 
 <script>
     var currentShopLat = @Model.Coord_lat;
     var currentShopLong = @Model.Coord_long;
-  /*  let currentMarker;*/
 
-    var map = L.map('map').setView([10.669190970892677, 122.97700317993419], 13);
+    var map = L.map('map').setView([currentShopLat, currentShopLong], 16);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
+        maxZoom: 20,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
@@ -96,16 +95,6 @@
         .addTo(map)
         .bindPopup("Editing: @Model.Title")
         .openPopup();
-
-    // Markers for all approved shops
-    @*@foreach (var shop in Model.Shops.Where(shop => shop.Approve == 1).ToList())
-    {
-        <text>
-            L.marker([@shop.Coord_lat, @shop.Coord_long])
-                .addTo(map)
-                .bindPopup("Shop: @shop.Title");
-        </text>
-    }*@
 
     map.locate({ setView: true, maxZoom: 16, watch: true });
 
