@@ -14,5 +14,6 @@ namespace LaundryGo.Data
         {
         }
         public DbSet<LaundryGo.Models.Shop> Shop { get; set; }
+        public DbSet<LaundryGo.Models.Users> Users { get; set; }
     }
 }

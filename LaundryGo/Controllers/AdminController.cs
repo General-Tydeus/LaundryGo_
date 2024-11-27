@@ -8,29 +8,49 @@ using Microsoft.EntityFrameworkCore;
 using LaundryGo.Data;
 using LaundryGo.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace LaundryGo.Controllers
 {
-    public class ShopsController : Controller
+    public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public ShopsController(ApplicationDbContext context)
+        public AdminController(ApplicationDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        // GET: Shops
+        public async Task<IActionResult> Users()
+        {
+            var userRoleDetails = from ur in _context.UserRoles
+                                  join u in _context.Users on ur.UserId equals u.Id
+                                  join r in _context.Roles on ur.RoleId equals r.Id
+                                  select new Users
+                                  {
+                                      Id = ur.UserId,
+                                      Role = r.Name,
+                                      UserName = u.UserName,
+                                      Email = u.Email
+                                  };
+
+            return View(userRoleDetails);
+        }
+
+        [Authorize(Roles ="Admin")]
+        // GET: Admin
         public async Task<IActionResult> Index()
         {
-            // 0 = pending 
-            // 1 = approved
-            // 2 = declined
-            //var pendingShops = await _context.Shop.Where(shop => shop.Approve == 1).ToListAsync();
+            //var allshops = await _context.Shop.ToListAsync();
             return View(await _context.Shop.ToListAsync());
         }
 
-        // GET: Shops/Details/5
+        // GET: Admin/Details/5
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,20 +68,20 @@ namespace LaundryGo.Controllers
             return View(shop);
         }
 
-        [Authorize]
-        // GET: Shops/Create
+        // GET: Admin/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Shops/Create
+        // POST: Admin/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Address,Coord_lat,Coord_long,UserId")] Shop shop)
+        public async Task<IActionResult> Create([Bind("Id,Title,Address,Coord_lat,Coord_long,UserId,Approve")] Shop shop)
         {
             if (ModelState.IsValid)
             {
@@ -72,34 +92,37 @@ namespace LaundryGo.Controllers
             return View(shop);
         }
 
-        // GET: Shops/Edit/5
+        // GET: Admin/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
+            //id == empty
             if (id == null)
             {
                 return NotFound();
             }
-
+            //shop not found
             var shop = await _context.Shop.FindAsync(id);
             if (shop == null)
             {
                 return NotFound();
             }
+
             return View(shop);
         }
 
-        // POST: Shops/Edit/5
+        // POST: Admin/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Address,Coord_lat,Coord_long")] Shop shop)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Address,Coord_lat,Coord_long,UserId,Approve")] Shop shop)
         {
             if (id != shop.Id)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
@@ -118,12 +141,14 @@ namespace LaundryGo.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Index));  
             }
             return View(shop);
         }
 
-        // GET: Shops/Delete/5
+        // GET: Admin/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -141,7 +166,8 @@ namespace LaundryGo.Controllers
             return View(shop);
         }
 
-        // POST: Shops/Delete/5
+        // POST: Admin/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
