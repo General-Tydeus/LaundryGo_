@@ -25,7 +25,10 @@ namespace LaundryGo.Models
         [Display(Name = "Longitude")]
         public string Coord_long { get; set; }
 
+        [Display(Name = "User Id")]
         public string UserId { get; set; }
+
+        [Display(Name = "Status")]
         public int Approve { get; set; }
 
         public Shop()

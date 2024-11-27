@@ -33,8 +33,11 @@ namespace LaundryGo
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +62,21 @@ namespace LaundryGo
             app.UseAuthentication();
             app.UseAuthorization();
 
+            //Create roles
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var roles = new[] { "Admin", "Manager", "Member" };
+
+                foreach (var role in roles)
+                {
+                    if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
+                    {
+                        roleManager.CreateAsync(new IdentityRole(role)).GetAwaiter().GetResult();
+                    }
+                }
+            }
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -66,6 +84,7 @@ namespace LaundryGo
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
         }
     }
 }

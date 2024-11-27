@@ -33,6 +33,21 @@
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
+
+    //show all approved shop
+   @foreach (var shop in Model)
+    {
+        if (shop.Approve == 1)
+        {
+            <text>
+                L.marker([@shop.Coord_lat, @shop.Coord_long])
+                    .addTo(map)
+                    .bindPopup("Shop: @shop.Title");
+            </text>
+        }
+    }
+
+    //display current user location and blue zone
     function onLocationFound(e) {
         var radius = e.accuracy / 2;
 
@@ -61,8 +76,8 @@
     map.locate({ setView: true, maxZoom: 16, watch: true });
 
 
-    map.on("contextmenu", function (e) {
-        console.log("Coordinates: " + e.latlng.toString());
-        L.marker(e.latlng).addTo(map);
-    });
+    //map.on("click", function (e) {
+    //    console.log("Coordinates: " + e.latlng.toString());
+    //    L.marker(e.latlng).addTo(map);
+    //});
 </script>
