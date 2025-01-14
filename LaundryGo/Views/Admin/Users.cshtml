@@ -1,11 +1,25 @@
 ﻿@model IEnumerable<LaundryGo.Models.Users>
+@{
+    var rowIndex = 0;
+ }
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">User List</li>
+    </ol>
+</nav>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+    <h1>List of Users</h1>
+    <a class="btn btn-primary mt-2 mt-md-0"  asp-area="Identity" asp-page="/Account/Register"> + create new</a>
+</div>
+
 <table class="table">
     <thead>
-        <tr>
+        <tr class="table-primary">
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.UserName)
             </th>
@@ -15,15 +29,19 @@
             <th>
                 @Html.DisplayNameFor(model => model.Role)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoleName)
-            </th>
+
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+
+    var rowClass = (rowIndex % 2 == 0) ? "table-light" : "table-primary";
+    rowIndex++;
+        <tr class="@rowClass">
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UserName)
             </td>
@@ -33,13 +51,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Role)
             </td>
+
             <td>
-                @Html.DisplayFor(modelItem => item.RoleName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">📝</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">🔍</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">🗑</a>
             </td>
         </tr>
 }

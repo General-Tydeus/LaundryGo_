@@ -11,7 +11,7 @@ namespace LaundryGo.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "The field is required.")]
-        [Display(Name = "Shop Name")]
+        [Display(Name = "Name")]
         public string Title { get; set; }
 
         [Required(ErrorMessage = "The field is required.")]

@@ -4,54 +4,101 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Shops">Shop List</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete Shop</li>
+    </ol>
+</nav>
 
+<hr />
+<h1>Delete</h1>
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Shop</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Coord_lat)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Coord_lat)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Coord_long)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Coord_long)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Approve)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Approve)
-        </dd>
-    </dl>
-    
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" readonly />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address" class="control-label"></label>
+                    @*<input asp-for="Shop.Address" class="form-control" />*@
+                    <textarea asp-for="Address" class="form-control" name="Address" rows="3" readonly></textarea>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Coord_lat" class="control-label"></label>
+                    <input asp-for="Coord_lat" class="form-control" id="Shop.Coord_lat" readonly />
+                    <span asp-validation-for="Coord_lat" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Coord_long" class="control-label"></label>
+                    <input asp-for="Coord_long" class="form-control" id="Shop.Coord_long" readonly />
+                    <span asp-validation-for="Coord_long" class="text-danger"></span>
+                </div>
+                @*<div class="form-group">
+                    <label asp-for="Shop.UserId" class="control-label"></label>*@
+                <input type="hidden" asp-for="UserId" class="form-control" readonly />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+                @*</div>*@
+                @*<div class="form-group">
+                        <label asp-for="Shop.Approve" class="control-label"></label>
+                        <input type="hidden" asp-for="Shop.Approve" class="form-control" />
+                        <span asp-validation-for="Shop.Approve" class="text-danger"></span>
+                    </div>*@
+                <div class="form-group">
+                    <label asp-for="Approve" class="control-label"></label>
+                    <select asp-for="Approve" class="form-control" disabled>
+                        <option value="0">Pending</option>
+                        <option value="1">Approved</option>
+                        <option value="2">Declined</option>
+                    </select>
+                    <span asp-validation-for="Approve" class="text-danger"></span>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Map Column -->
+        <div class="col-md-8">
+            <div id="map" class="d-flex flex-column" style="height: 100%;">
+                <div class="flex-grow-1">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Shops">Back to List</a>
     </form>
 </div>
+
+<script>
+    var currentShopLat = @Model.Coord_lat;
+    var currentShopLong = @Model.Coord_long;
+
+    // Initialize the map, centered on the marker with a suitable zoom level
+    var map = L.map('map').setView([currentShopLat, currentShopLong], 16);
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Add marker and bind popup
+    L.marker([currentShopLat, currentShopLong])
+        .addTo(map)
+        .bindPopup("Details: @Model.Title")
+        .openPopup();
+</script>
+

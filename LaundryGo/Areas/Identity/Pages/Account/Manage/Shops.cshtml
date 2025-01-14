@@ -1,0 +1,64 @@
+﻿@page
+@model ShopsModel
+@{
+    ViewData["Title"] = "Manage Shops";
+    ViewData["ActivePage"] = ManageNavPages.Shops;
+    var rowIndex = 0;
+}
+
+<h4>@ViewData["Title"]</h4>
+
+<div class="row">
+    <table class="table" id="shopTable">
+        <thead>
+            <tr class="table-primary">
+                <th>ID</th>
+                <th>Address</th>
+                @*<th>Lalitude</th>
+                <th>Longitude</th>
+                <th>User ID</th>*@
+                <th>Status</th>
+                <th>Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Shops)
+            {
+                var rowClass = (rowIndex % 2 == 0) ? "table-light" : "table-primary";
+                rowIndex++;
+                <tr class="@($"status-{item.Approve} {rowClass}")">
+                    <td>@item.Id</td>
+                    <td>@item.Address</td>
+                    @*<td>@item.Coord_lat</td>
+                    <td>@item.Coord_long</td>
+                    <td>@item.UserId</td>*@
+                    <td>
+                        @if (item.Approve == 0)
+                        {
+                            @:Pending
+                        }
+                        else if (item.Approve == 1)
+                        {
+                            @:Approved
+                        }
+                        else if (item.Approve == 2)
+                        {
+                            @:Declined
+                        }
+                    </td>
+                    <td>
+                        <a asp-controller="Shops" asp-action="Edit" asp-route-id="@item.Id">📝</a> |
+                        <a asp-controller="Shops" asp-action="Details" asp-route-id="@item.Id">🔍</a> |
+                        <a asp-controller="Shops" asp-action="Delete" asp-route-id="@item.Id">🗑</a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
