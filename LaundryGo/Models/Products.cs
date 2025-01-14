@@ -17,6 +17,8 @@ namespace LaundryGo.Models
         [Required(ErrorMessage = "The field is required.")]
         public string Price { get; set; }
 
+        public string Availability { get; set; }
+
         [Display(Name = "User Id")]
         public string UserId { get; set; }
 
