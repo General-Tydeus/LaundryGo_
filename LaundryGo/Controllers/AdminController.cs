@@ -59,7 +59,7 @@ namespace LaundryGo.Controllers
         }
 
         // GET: Admin/Details/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Member")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
