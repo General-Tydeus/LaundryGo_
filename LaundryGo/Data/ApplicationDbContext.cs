@@ -14,7 +14,8 @@ namespace LaundryGo.Data
         {
         }
         public DbSet<LaundryGo.Models.Shop> Shop { get; set; }
-        public DbSet<LaundryGo.Models.Users> Users { get; set; }
+        public DbSet<LaundryGo.Models.Products> Products { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Users>(entity =>
