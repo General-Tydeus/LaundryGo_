@@ -6,11 +6,13 @@
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-area="Identity" asp-page="/Account/Manage/Shops">Shops</a></li>
         @*<li class="breadcrumb-item"><a asp-area="Identity" asp-page="/Account/Manage">Shops</a></li>*@
         <li class="breadcrumb-item active" aria-current="page">Edit Shop</li>
     </ol>
 </nav>
+
+<a class="btn btn-primary mt-2 mt-md-0" asp-controller="Products" asp-action="Index" asp-route-id="@Model.Id">View Services</a>
 
 <hr />
 <div class="row">
@@ -76,9 +78,6 @@
 
 <div>
     <a asp-area="Identity" asp-page="/Account/Manage/Index">Back to List</a>
-</div>
-<div>
-    <p>this area is for services and pricing</p>
 </div>
 
 <script>

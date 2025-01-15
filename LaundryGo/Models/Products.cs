@@ -19,7 +19,6 @@ namespace LaundryGo.Models
 
         public string Availability { get; set; }
 
-        [Display(Name = "User Id")]
         public string UserId { get; set; }
 
 
