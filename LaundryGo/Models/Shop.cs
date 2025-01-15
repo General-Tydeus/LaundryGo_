@@ -31,6 +31,7 @@ namespace LaundryGo.Models
         [Display(Name = "Status")]
         public int Approve { get; set; }
 
+
         public Shop()
         {
 

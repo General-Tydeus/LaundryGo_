@@ -35,17 +35,25 @@
 
 
     //show all approved shop
-   @foreach (var shop in Model)
+@foreach (var shop in Model)
+{
+    if (shop.Approve == 1)
     {
-        if (shop.Approve == 1)
-        {
-            <text>
-                L.marker([@shop.Coord_lat, @shop.Coord_long])
-                    .addTo(map)
-                    .bindPopup("Shop: @shop.Title");
-            </text>
-        }
+        <text>
+            L.marker([@shop.Coord_lat, @shop.Coord_long])
+                .addTo(map)
+                .bindPopup(`
+                    <div style="width: 200px; padding: 10px; text-align: center; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        <h5>@shop.Title</h5>
+                        <p style="margin: 0; font-size: 14px;">Hello 123 123</p>
+                     
+                    </div>
+                `);
+        </text>
     }
+}
+
+
 
     //display current user location and blue zone
     function onLocationFound(e) {
@@ -81,3 +89,4 @@
     //    L.marker(e.latlng).addTo(map);
     //});
 </script>
+
