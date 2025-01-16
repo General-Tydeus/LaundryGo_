@@ -159,5 +159,32 @@ namespace LaundryGo.Controllers
         {
             return _context.Products.Any(e => e.Id == id);
         }
+
+
+        [HttpGet]
+        public JsonResult GetProductDetails(int productId)
+        {
+            // Query to get products based on productId or other criteria
+            var products = _context.Products
+                                   .Where(p => p.UserId == productId.ToString()) // Adjust this query based on your requirements
+                                   .ToList(); // Make sure you get a list of products
+
+            if (products.Any()) // Check if there are products
+            {
+                // Return multiple products' details
+                var productDetails = products.Select(p => new
+                {
+                    productName = p.ProductName,
+                    price = p.Price,
+                    availability = p.Availability,
+                }).ToList();
+
+                return Json(productDetails); // Return a list of products
+            }
+
+            return Json(null); // Return null if no data found
+        }
+
+
     }
 }

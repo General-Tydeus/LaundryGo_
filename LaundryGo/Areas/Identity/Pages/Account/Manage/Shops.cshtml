@@ -12,7 +12,7 @@
     <table class="table" id="shopTable">
         <thead>
             <tr class="table-primary">
-                <th>ID</th>
+                <th>Shop</th>
                 <th>Address</th>
                 @*<th>Lalitude</th>
                 <th>Longitude</th>
@@ -28,7 +28,7 @@
                 var rowClass = (rowIndex % 2 == 0) ? "table-light" : "table-primary";
                 rowIndex++;
                 <tr class="@($"status-{item.Approve} {rowClass}")">
-                    <td>@item.Id</td>
+                    <td>@item.Title</td>
                     <td>@item.Address</td>
                     @*<td>@item.Coord_lat</td>
                     <td>@item.Coord_long</td>
