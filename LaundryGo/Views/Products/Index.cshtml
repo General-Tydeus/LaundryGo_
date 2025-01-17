@@ -20,7 +20,7 @@
 
 <table class="table">
     <thead>
-        <tr>
+        <tr class="table-primary">
             <th>
                 @Html.DisplayNameFor(model => model.ProductName)
             </th>
@@ -31,9 +31,9 @@
                 @Html.DisplayNameFor(model => model.Availability)
             </th>
             @*<th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>*@
-            <th></th>
+            @Html.DisplayNameFor(model => model.UserId)
+        </th>*@
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -53,8 +53,9 @@
                     @Html.DisplayFor(modelItem => item.UserId)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" asp-route-userId="@ViewData["UserId"]">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" asp-route-userId="@ViewData["UserId"]">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">📝</a>|<a asp-controller="Shops" asp-action="Delete" asp-route-id="@item.Id">🗑</a>
+                    @*<a asp-action="Edit" asp-route-id="@item.Id" asp-route-userId="@ViewData["UserId"]">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" asp-route-userId="@ViewData["UserId"]">Delete</a>*@
                 </td>
             </tr>
         }

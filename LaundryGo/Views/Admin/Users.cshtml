@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<LaundryGo.Models.Users>
 @{
     var rowIndex = 0;
- }
+}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Home</a></li>
@@ -11,53 +11,93 @@
 
 <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
     <h1>List of Users</h1>
-    <a class="btn btn-primary mt-2 mt-md-0"  asp-area="Identity" asp-page="/Account/Register"> + Create</a>
+    <a class="btn btn-primary mt-2 mt-md-0" asp-area="Identity" asp-page="/Account/Register"> + Create</a>
 </div>
-
-<table class="table">
+<div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" href="#" data-filter="all">All</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-filter="Admin">Admin</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-filter="Member">Member</a>
+        </li>
+    </ul>
+    <div class="input-group w-50">
+        <input id="searchInput" type="text" class="form-control" placeholder="Search by Name" aria-label="Search">
+        <span class="input-group-text">🔍</span>
+    </div>
+</div>
+<br />
+<table class="table" id="shopTable">
     <thead>
         <tr class="table-primary">
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>
-
-            @*<th></th>*@
+            <th>@Html.DisplayNameFor(model => model.Id)</th>
+            <th>@Html.DisplayNameFor(model => model.UserName)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.Role)</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-
-    var rowClass = (rowIndex % 2 == 0) ? "table-light" : "table-primary";
-    rowIndex++;
-        <tr class="@rowClass">
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-
-            @*<td>
-                <a asp-action="Edit" asp-route-id="@item.Id">📝</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">🔍</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">🗑</a>
-            </td>*@
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            var rowClass = item.Role; // Use Role to define the filter class (e.g., Admin, Member)
+            <tr data-title="@item.UserName.ToLower()" class="status-@rowClass">
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.Role)</td>
+            </tr>
+        }
     </tbody>
 </table>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterTabs = document.querySelectorAll(".nav-pills .nav-link");
+        const rows = document.querySelectorAll("#shopTable tbody tr");
+        const searchInput = document.getElementById("searchInput");
+
+        let currentFilter = "all"; // Track the current filter
+
+        // Function to filter rows based on current filter and search input
+        function applyFilters() {
+            const searchValue = searchInput.value.trim().toLowerCase();
+
+            rows.forEach(row => {
+                const title = row.getAttribute("data-title"); // Get the data-title attribute
+                const roleClass = row.classList.contains("status-" + currentFilter);
+                const matchesSearch = title.includes(searchValue);
+                const matchesFilter = currentFilter === "all" || roleClass;
+
+                // Show row only if it matches both the search and the filter
+                row.style.display = matchesSearch && matchesFilter ? "" : "none";
+            });
+        }
+
+        // Handle filter tab clicks
+        filterTabs.forEach(tab => {
+            tab.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                // Update active tab
+                filterTabs.forEach(t => t.classList.remove("active"));
+                this.classList.add("active");
+
+                // Update the current filter and apply filters
+                currentFilter = this.getAttribute("data-filter");
+                applyFilters();
+            });
+        });
+
+        // Handle search input changes
+        searchInput.addEventListener("input", applyFilters);
+
+        // Apply initial filters
+        applyFilters();
+    });
+
+</script>

@@ -25,9 +25,9 @@
         <tbody>
             @foreach (var item in Model.Shops)
             {
-                var rowClass = (rowIndex % 2 == 0) ? "table-light" : "table-primary";
+                //var rowClass = (rowIndex % 2 == 0) ? "table-light" : "table-primary";
                 rowIndex++;
-                <tr class="@($"status-{item.Approve} {rowClass}")">
+                <tr class="@($"status-{item.Approve}")">
                     <td>@item.Title</td>
                     <td>@item.Address</td>
                     @*<td>@item.Coord_lat</td>
@@ -48,9 +48,9 @@
                         }
                     </td>
                     <td>
-                        <a asp-controller="Shops" asp-action="Edit" asp-route-id="@item.Id">📝</a> |
+                        <a asp-controller="Shops" asp-action="Edit" asp-route-id="@item.Id">📝</a>|<a asp-controller="Shops" asp-action="Delete" asp-route-id="@item.Id">🗑</a>
                         @*<a asp-controller="Shops" asp-action="Details" asp-route-id="@item.Id">🔍</a> |*@
-                        <a asp-controller="Shops" asp-action="Delete" asp-route-id="@item.Id">🗑</a>
+                        
                     </td>
                 </tr>
             }

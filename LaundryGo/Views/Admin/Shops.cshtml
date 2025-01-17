@@ -2,41 +2,44 @@
 @{
     var rowIndex = 0;
 }
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Shop List</li>
-        </ol>
-    </nav>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Shop List</li>
+    </ol>
+</nav>
 
 <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
     <h1>List of All Shops</h1>
-    @*<a class="btn btn-primary mt-2 mt-md-0" asp-action="Create"> + Create New</a>*@
 </div>
 
-<ul class="nav nav-pills">
-    <li class="nav-item">
-        <a class="nav-link active" href="#" data-filter="all">All</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#" data-filter="1">Approved</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#" data-filter="0">Pending</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#" data-filter="2">Declined</a>
-    </li>
-</ul>
+<div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" href="#" data-filter="all">All</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-filter="1">Approved</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-filter="0">Pending</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-filter="2">Declined</a>
+        </li>
+    </ul>
+    <div class="input-group w-50">
+        <input id="searchInput" type="text" class="form-control" placeholder="Search by Name" aria-label="Search">
+        <span class="input-group-text">🔍</span>
+    </div>
+</div>
+
 <br />
 <table class="table" id="shopTable">
     <thead>
         <tr class="table-primary">
             <th>@Html.DisplayNameFor(model => model.Title)</th>
             <th>@Html.DisplayNameFor(model => model.Address)</th>
-            @*<th>@Html.DisplayNameFor(model => model.Coord_lat)</th>
-                <th>@Html.DisplayNameFor(model => model.Coord_long)</th>
-                <th>@Html.DisplayNameFor(model => model.UserId)</th>*@
             <th>Status</th>
             <th>Actions</th>
         </tr>
@@ -44,14 +47,11 @@
     <tbody>
         @foreach (var item in Model)
         {
-            var rowClass = (rowIndex % 2 == 0) ? "table-light" : "table-primary";
+           
             rowIndex++;
-            <tr class="@($"status-{item.Approve} {rowClass}")">
+            <tr class="@($"status-{item.Approve}")" data-title="@item.Title.ToLower()">
                 <td>@Html.DisplayFor(modelItem => item.Title)</td>
                 <td>@Html.DisplayFor(modelItem => item.Address)</td>
-                @*<td>@Html.DisplayFor(modelItem => item.Coord_lat)</td>
-                <td>@Html.DisplayFor(modelItem => item.Coord_long)</td>
-                <td>@Html.DisplayFor(modelItem => item.UserId)</td>*@
                 <td>
                     @if (item.Approve == 0)
                     {
@@ -67,9 +67,7 @@
                     }
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">📝</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">🔍</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">🗑</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">📝</a>|<a asp-action="Delete" asp-route-id="@item.Id">🗑</a>
                 </td>
             </tr>
         }
@@ -78,32 +76,46 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const filterTabs = document.querySelectorAll(".nav-pills .nav-link"); // Only filter tabs
+        const filterTabs = document.querySelectorAll(".nav-pills .nav-link");
         const rows = document.querySelectorAll("#shopTable tbody tr");
+        const searchInput = document.getElementById("searchInput");
 
+        let currentFilter = "all"; // Track the current filter
+
+        // Filter rows based on the current filter and search input
+        function applyFilters() {
+            const searchValue = searchInput.value.trim().toLowerCase();
+
+            rows.forEach(row => {
+                const title = row.dataset.title;
+                const matchesSearch = title.includes(searchValue);
+                const matchesFilter = currentFilter === "all" || row.classList.contains("status-" + currentFilter);
+
+                // Show row only if it matches both the search and the current filter
+                row.style.display = matchesSearch && matchesFilter ? "" : "none";
+            });
+        }
+
+        // Handle filter tab clicks
         filterTabs.forEach(tab => {
             tab.addEventListener("click", function (e) {
                 e.preventDefault();
 
-                // Remove "active" class from all filter tabs and add it to the clicked tab
+                // Update active tab
                 filterTabs.forEach(t => t.classList.remove("active"));
                 this.classList.add("active");
 
-                // Get the filter value
-                const filter = this.getAttribute("data-filter");
-
-                // Show/hide rows based on the filter
-                rows.forEach(row => {
-                    if (filter === "all") {
-                        row.style.display = ""; // Show all rows
-                    } else if (row.classList.contains("status-" + filter)) {
-                        row.style.display = ""; // Show matching rows
-                    } else {
-                        row.style.display = "none"; // Hide non-matching rows
-                    }
-                });
+                // Update the current filter and apply filters
+                currentFilter = this.getAttribute("data-filter");
+                applyFilters();
             });
         });
-    });
 
+        // Handle search input changes
+        searchInput.addEventListener("input", applyFilters);
+
+        // Apply initial filters
+        applyFilters();
+    });
 </script>
+
