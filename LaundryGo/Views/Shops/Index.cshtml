@@ -12,16 +12,39 @@
 
 <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
     <h1>Shops nearby</h1>
-    <a class="btn btn-primary mt-2 mt-md-0" asp-action="Create"> + create new</a>
+    @if (User.Identity.IsAuthenticated){
+        <a class="btn btn-primary mt-2 mt-md-0" asp-action="Create"> + Create</a>
+     }
 </div>
 
 
-<div class="d-flex flex-column vh-100">
-        <div id="map" class="flex-grow-1">
-            @*@{ Html.RenderPartial("_Map"); }*@
+<div class="d-flex flex-column" style="height: 80vh;">
+    <!-- 50% of the viewport height -->
+    <div id="map" class="flex-grow-1" style="height: 100%;"></div>
+</div>
+
+
+
+<div class="modal fade" id="shopModal" tabindex="-1" aria-labelledby="shopModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shopModalLabel">Shop Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+            <div class="modal-body" id="shopModalBody">
+                <!-- Content will be dynamically injected here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
-@*<div id="map" style="width: 100%; height: 100%;"></div>*@
+</div>
+
 
 <script>
     var userMarker;
@@ -40,18 +63,86 @@
     if (shop.Approve == 1)
     {
         <text>
+            // Add marker with a popup
             L.marker([@shop.Coord_lat, @shop.Coord_long])
                 .addTo(map)
                 .bindPopup(`
                     <div style="width: 200px; padding: 10px; text-align: center; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                         <h5>@shop.Title</h5>
-                        <p style="margin: 0; font-size: 14px;">Hello 123 123</p>
-                     
+                        <p style="margin: 0; font-size: 14px;">Shop details here...</p>
+                        <button class="btn btn-primary btn-sm mt-2" onclick="showModal('@shop.Id','@shop.Title', '@shop.Coord_lat', '@shop.Coord_long', '@shop.Address')">
+                            View Details
+                        </button>
                     </div>
                 `);
         </text>
     }
 }
+
+    function showModal(id, title, lat, long, address) {
+        // Update the modal title
+        document.getElementById('shopModalLabel').textContent = title;
+
+        // Make an AJAX request to fetch additional data based on the shop ID
+        fetch(`/Products/GetProductDetails?productId=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                let modalBodyContent;
+
+                if (data && data.length > 0) {
+                    // Build the table with multiple product entries
+                    let tableRows = data.map(item => `
+                    <tr>
+                        <td>${item.productName}</td>
+                        <td>${item.price}</td>
+                        <td>${item.availability}</td>
+                    </tr>
+                `).join('');
+
+                    // Table content for modal body
+                    modalBodyContent = `
+                    <p><strong>Address:</strong> ${address}</p>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Services</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                `;
+                } else {
+                    // No data available content
+                    modalBodyContent = `
+                    <p><strong>Address:</strong> ${address}</p>
+                    <p>No services available for this shop.</p>
+                `;
+                }
+
+                // Update the modal body with the content
+                document.getElementById('shopModalBody').innerHTML = modalBodyContent;
+
+                // Show the modal
+                var myModal = new bootstrap.Modal(document.getElementById('shopModal'));
+                myModal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+
+                // Handle errors by showing a message in the modal
+                document.getElementById('shopModalBody').innerHTML = `
+                <p>An error occurred while fetching data. Please try again later.</p>
+            `;
+
+                // Show the modal
+                var myModal = new bootstrap.Modal(document.getElementById('shopModal'));
+                myModal.show();
+            });
+    }
 
 
 
