@@ -2,13 +2,49 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to LaundryGo</h1>
-    <p>
-        LaundryGo is a mobile application designed to enhance accessibility, efficiency, and transparency in laundry services. It addresses common challenges such as limited access to nearby shops, lack of real-time updates, and unclear pricing by providing a centralized platform.
-
-        With LaundryGo, users can locate nearby laundry shops, view real-time availability, compare prices, and explore specialized services—all through an intuitive interface. This streamlines the decision-making process, saving time and ensuring convenience.
-
-        By modernizing traditional laundry services, LaundryGo empowers users to make informed choices quickly and efficiently, transforming how laundry tasks are managed in Bacolod City.
-    </p>
+<div class="container my-5">
+    <div class="row align-items-center bg-light shadow rounded p-4">
+        <!-- Left Section -->
+        <div class="col-md-6 text-center d-flex align-items-center justify-content-center">
+            <div>
+                <img src="~/images/map_home.png" alt="LaundryGo Logo" class="img-fluid hover-effect"
+                     style="width: 100%; max-width: 400px; border-radius: 15px;">
+            </div>
+        </div>
+        <!-- Right Section -->
+        <div class="col-md-6 text-center text-md-start d-flex align-items-center justify-content-center">
+            <div>
+                <h2 class="text-primary fw-bold mb-3">Welcome to LaundryGo</h2>
+                <p class="text-secondary fs-5">
+                    Your trusted platform for accessible and efficient laundry services. Locate nearby shops, view real-time availability, compare prices, and explore specialized services—all in one place.
+                </p>
+                <p class="text-secondary fs-5">
+                    Designed to save you time and simplify your laundry needs, LaundryGo ensures convenience, transparency, and smart decision-making for a better laundry experience in Bacolod City.
+                </p>
+                <a class="btn btn-primary btn-lg mt-3 shadow-sm" asp-area="" asp-controller="Shops" asp-action="Index">Explore Shops</a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .hover-effect {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .hover-effect:hover {
+            transform: scale(1.1);
+        }
+
+    .bg-light {
+        background-color: #f8f9fa !important; /* Light background for contrast */
+    }
+
+    h2.text-primary {
+        font-size: 2.5rem; /* Larger heading size */
+    }
+
+    p.text-secondary {
+        line-height: 1.8; /* Better readability */
+    }
+</style>

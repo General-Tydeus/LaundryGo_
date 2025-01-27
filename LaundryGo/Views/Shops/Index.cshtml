@@ -67,19 +67,22 @@
             L.marker([@shop.Coord_lat, @shop.Coord_long])
                 .addTo(map)
                 .bindPopup(`
-                    <div style="width: 200px; padding: 10px; text-align: center; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <div style="width: 200px; padding: 10px; text-align: center;">
                         <h5>@shop.Title</h5>
-                        <p style="margin: 0; font-size: 14px;">Shop details here...</p>
-                        <button class="btn btn-primary btn-sm mt-2" onclick="showModal('@shop.Id','@shop.Title', '@shop.Coord_lat', '@shop.Coord_long', '@shop.Address')">
+                        <p style="margin: 0; font-size: 14px;">@shop.OfficeHours</p>
+                        <p id="distance-@shop.Id" style="margin: 0; font-size: 14px;">Distance: Calculating...</p>
+                        <button class="btn btn-primary btn-sm mt-2" onclick="showModal('@shop.Id','@shop.Title', '@shop.Coord_lat', '@shop.Coord_long', '@shop.Address', '@shop.Description', '@shop.OfficeHours')">
                             View Details
                         </button>
                     </div>
-                `);
+                `).on('click', function(e) {
+                    calculateDistance([@shop.Coord_lat, @shop.Coord_long], '@shop.Id');
+                });
         </text>
     }
 }
 
-    function showModal(id, title, lat, long, address) {
+    function showModal(id, title, lat, long, address, description, OfficeHours) {
         // Update the modal title
         document.getElementById('shopModalLabel').textContent = title;
 
@@ -101,6 +104,8 @@
 
                     // Table content for modal body
                     modalBodyContent = `
+                    <p><strong>Office Hours:</strong> ${OfficeHours}</p>
+                    <p><strong>Description:</strong> ${description}</p>
                     <p><strong>Address:</strong> ${address}</p>
                     <table class="table table-bordered">
                         <thead>
@@ -118,6 +123,8 @@
                 } else {
                     // No data available content
                     modalBodyContent = `
+                    <p><strong>Office Hours:</strong> ${OfficeHours}</p>
+                    <p><strong>Description:</strong> ${description}</p>
                     <p><strong>Address:</strong> ${address}</p>
                     <p>No services available for this shop.</p>
                 `;
@@ -143,6 +150,32 @@
                 myModal.show();
             });
     }
+
+    //get distance
+    function calculateDistance(markerLatLng, shopId) {
+        if (!userMarker) {
+            alert("Unable to calculate distance. Please allow location access.");
+            return;
+        }
+
+        // Get user's current location
+        var userLatLng = userMarker.getLatLng();
+
+        // Calculate the distance using Leaflet's distanceTo function
+        var distance = userLatLng.distanceTo(markerLatLng); // Distance in meters
+
+        // Format the distance dynamically
+        var distanceText;
+        if (distance < 1000) {
+            distanceText = `${Math.round(distance)} meters`;
+        } else {
+            distanceText = `${(distance / 1000).toFixed(2)} km`;
+        }
+
+        // Update the popup content
+        document.getElementById(`distance-${shopId}`).innerText = `Distance: ${distanceText}`;
+    }
+
 
 
 
@@ -174,10 +207,5 @@
 
     map.locate({ setView: true, maxZoom: 16, watch: true });
 
-
-    //map.on("click", function (e) {
-    //    console.log("Coordinates: " + e.latlng.toString());
-    //    L.marker(e.latlng).addTo(map);
-    //});
 </script>
 

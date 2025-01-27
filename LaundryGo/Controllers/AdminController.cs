@@ -90,7 +90,7 @@ namespace LaundryGo.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Address,Coord_lat,Coord_long,UserId,Approve")] Shop shop)
+        public async Task<IActionResult> Create([Bind("Id,Title,Address,Coord_lat,Coord_long,UserId,Approve,OfficeHours,Description")] Shop shop)
         {
             if (ModelState.IsValid)
             {
@@ -126,7 +126,7 @@ namespace LaundryGo.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Address,Coord_lat,Coord_long,UserId,Approve")] Shop shop)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Address,Coord_lat,Coord_long,UserId,Approve,OfficeHours,Description")] Shop shop)
         {
             if (id != shop.Id)
             {
