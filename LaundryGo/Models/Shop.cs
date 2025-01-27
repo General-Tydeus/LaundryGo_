@@ -31,6 +31,13 @@ namespace LaundryGo.Models
         [Display(Name = "Status")]
         public int Approve { get; set; }
 
+        [Display(Name = "Office Hours")]
+        [Required(ErrorMessage = "The field is required.")]
+        public string OfficeHours { get; set; }
+        
+        [Display(Name = "Brief Description")]
+        public string Description { get; set; }
+
 
         public Shop()
         {
